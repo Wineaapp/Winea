@@ -7,15 +7,22 @@ export default function Home() {
           <header className="bg-[#7224D1] text-white">
             <div className="py-4 layout">
               <nav className="flex justify-between items-center">
-                  <Image
-                    src="/winea_logo.svg"
-                    alt="logo"
-                    width={91}
-                    height={36}
-                  />
+                  <Link href="/">
+                    <Image
+                      src="/winea_logo.svg"
+                      alt="logo"
+                      width={91}
+                      height={36}
+                    />
+                  </Link>
                   <ul>
                     <li>
-                      <Link href="/" className="border-2 text-xs py-4 px-6 rounded-full">Nous contacter</Link>
+                      <Link 
+                        href="mailto:contact@winea.app" 
+                        className="border-2 text-xs py-4 px-6 rounded-full [@media(hover:hover)]:hover:bg-black active:bg-black transition"
+                      >
+                        Nous contacter
+                      </Link>
                     </li>
                   </ul>
                 </nav>
@@ -23,31 +30,28 @@ export default function Home() {
                 <section className="text-center pt-20 pb-36  md:px-20 flex flex-col justify-center items-center gap-8">
                   <h1 className="font-extrabold text-3xl sm:text-5xl">Boostez votre <br /> e-commerce en Afrique grâce à notre outil d&apos;analyse</h1>
                   <p className="font-thin sm:px-20 lg:px-59">Découvrez les produits, publicités et tendances adapté au marché africain</p>
-                  <Link href='/' className="bg-[#EFCC5B] text-xs text-black font-semibold py-4 px-6 rounded-full">Rejoignez la liste d&apos;attente</Link>
+                  <Link href='#waitlist' className="bg-[#EFCC5B] text-xs text-black font-semibold py-4 px-6 rounded-full [@media(hover:hover)]:hover:bg-black [@media(hover:hover)]:hover:text-white active:bg-black active:text-white transition-all">Rejoignez la liste d&apos;attente</Link>
                 </section>
             </div>
-            
           </header>
-          
-          
 
           <main>
             <div className="layout relative top-[-100px]">
               {/* Gradient background div */}
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 rounded-3xl blur-3xl opacity-30" />
-              <div className="relative">
-                <Image
-                  className="mx-auto"
-                  src="/Dashboard.png"
-                  alt="dashboard"
-                  width={1116}
-                  height={735}
-                />
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 rounded-3xl blur-3xl opacity-80 md:opacity-40" />
+                <div className="relative">
+                  <Image
+                    className="mx-auto"
+                    src="/Dashboard.png"
+                    alt="dashboard"
+                    width={1116}
+                    height={735}
+                  />
+                </div>
               </div>
-            </div>
               
             
-            <section className="layout flex flex-col gap-32 pb-20">
+            <section className="layout flex flex-col gap-16 sm:gap-32 pb-20">
               <article className="flex flex-col md:flex-row justify-between items-center gap-16">
                 <div className="flex flex-col gap-4 md:w-1/2">
                   <h2 className="font-extrabold text-2xl sm:text-3xl">Analyse des publicités multicanale</h2>
@@ -151,7 +155,7 @@ export default function Home() {
               </article>
             </section>
 
-            <section className="layout text-center flex flex-col gap-24 pt-16">
+            <section className="layout text-center flex flex-col gap-24 pt-10">
               <h2 className="font-extrabold text-3xl">Nos valeurs ajoutées</h2>
               <section className="flex flex-col md:flex-row justify-between gap-16">
                 <article className="flex flex-col gap-4 items-center">
@@ -198,12 +202,12 @@ export default function Home() {
               </section>
             </section>
 
-            <section className="bg-[#7224D1] text-white text-center py-16 px-8 rounded-3xl flex flex-col md:flex-row justify-center items-center gap-16 mt-16">
+            <section id="waitlist" className="bg-[#7224D1] text-white text-center py-16 px-8 rounded-t-3xl flex flex-col md:flex-row justify-center items-center gap-16 mt-16">
                 <div className="flex flex-col gap-8 items-center justify-center md:text-left lg:px-12">
                   <h2 className="font-extrabold text-3xl">Commencer maintenant 
                     et booster vos ventes à nos outils d&apos;analyse</h2>
                   <div className="flex flex-col md:flex-row md:self-start gap-4">
-                    <Link href='/' className="bg-[#EFCC5B] text-xs text-black font-semibold py-4 px-6 rounded-full">Rejoignez la liste d&apos;attente</Link>
+                    <Link href='#waitlist' className="bg-[#EFCC5B] text-xs text-black font-semibold py-4 px-6 rounded-full [@media(hover:hover)]:hover:bg-black [@media(hover:hover)]:hover:text-white active:bg-black active:text-white transition-all">Rejoignez la liste d&apos;attente</Link>
                     <Link href='/' className="border-2 text-xs font-semibold py-4 px-6 rounded-full">Contactez-nous</Link>
                   </div>
                 </div>
@@ -216,6 +220,61 @@ export default function Home() {
                 />
             </section>
           </main>
+
+          <footer className="layout">
+            <div className="text-xs py-8 flex flex-col md:flex-row justify-between items-center">
+              <div className="flex flex-col gap-4 justify-center md:flex-row md:gap-8 items-center">
+                <Link href="/">
+                  <Image
+                    className=""
+                    src="logo_purple.svg"
+                    alt="logo"
+                    width={65}
+                    height={26}
+                  />
+                </Link>
+
+                <div className="flex gap-4 md:gap-8 md:relative top-[0.3rem]">
+                  <Link
+                    href="#waitlist"
+                    className="[@media(hover:hover)]:hover:underline [@media(hover:hover)]:hover:text-purple-600 active:text-purple-600"
+                  >
+                    Voir la démo
+                  </Link>
+                  <Link 
+                    href="mailto:contact@winea.app"
+                    className="[@media(hover:hover)]:hover:underline [@media(hover:hover)]:hover:text-purple-600 active:text-purple-600"
+                  >
+                    Contactez-nous
+                  </Link>
+                </div>
+              </div>
+              <div className="mt-4 flex items-center gap-4 md:gap-8">
+                <Image
+                  src="facebook.svg"
+                  alt="facebook"
+                  width={24}
+                  height={24}
+                />
+                <Image
+                  src="linkedin.svg"
+                  alt="linkedin"
+                  width={24}
+                  height={24}
+                />
+                <Image
+                  src="instagram.svg"
+                  alt="instagram"
+                  width={24}
+                  height={24}
+                />
+              </div>
+            </div>
+            <hr className="w-full border-gray-300"/>
+            <p className="text-gray-400 text-xs my-4 text-center">&copy; 2024-Winea-Tout droits réservés | Mentions légales | Politique de confidentialité
+              | Conditions générales d&apos;utilisation
+            </p>
+          </footer>
     </>
 
     
