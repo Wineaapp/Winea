@@ -202,22 +202,24 @@ export default function Home() {
               </section>
             </section>
 
-            <section id="waitlist" className="bg-[#7224D1] text-white text-center py-16 px-8 rounded-t-3xl flex flex-col md:flex-row justify-center items-center gap-16 mt-16">
-                <div className="flex flex-col gap-8 items-center justify-center md:text-left lg:px-12">
-                  <h2 className="font-extrabold text-3xl">Commencer maintenant 
-                    et booster vos ventes à nos outils d&apos;analyse</h2>
-                  <div className="flex flex-col md:flex-row md:self-start gap-4">
-                    <Link href='#waitlist' className="bg-[#EFCC5B] text-xs text-black font-semibold py-4 px-6 rounded-full [@media(hover:hover)]:hover:bg-black [@media(hover:hover)]:hover:text-white active:bg-black active:text-white transition-all">Rejoignez la liste d&apos;attente</Link>
-                    <Link href='/' className="border-2 text-xs font-semibold py-4 px-6 rounded-full">Contactez-nous</Link>
+            <section id="waitlist" className="bg-[#7224D1] text-white text-center py-16 px-4 rounded-t-3xl mt-16">
+                <div className="layout flex flex-col md:flex-row justify-center items-center gap-16">
+                  <div className="flex flex-col gap-8 items-center justify-center md:text-left lg:px-12">
+                    <h2 className="font-extrabold text-3xl">Commencer maintenant 
+                      et booster vos ventes à nos outils d&apos;analyse</h2>
+                    <div className="flex flex-col md:flex-row md:self-start gap-4">
+                      <Link href='#waitlist' className="bg-[#EFCC5B] text-xs text-black font-semibold py-4 px-6 rounded-full [@media(hover:hover)]:hover:bg-black [@media(hover:hover)]:hover:text-white active:bg-black active:text-white transition-all">Rejoignez la liste d&apos;attente</Link>
+                      <Link href='/' className="border-2 text-xs font-semibold py-4 px-6 rounded-full">Contactez-nous</Link>
+                    </div>
                   </div>
+                  <Image
+                    className="md:w-[40%]"
+                    src="/personne.svg"
+                    alt="personne"
+                    width={558}
+                    height={397}
+                  />
                 </div>
-                <Image
-                  className="md:w-[40%]"
-                  src="/personne.svg"
-                  alt="personne"
-                  width={558}
-                  height={397}
-                />
             </section>
           </main>
 
