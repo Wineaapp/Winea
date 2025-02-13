@@ -4,7 +4,7 @@ import React from 'react';
 import { Resend } from "resend";
 import WaitinglistEmail from "@/email/WaitinglistEmail";
 
-const resend = new Resend("re_QUNidFSs_C5dL3RDo1znEe22h9PMuhfkp");
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export default async function sendEmail(formData: FormData) {
     // Your email sending logic here
