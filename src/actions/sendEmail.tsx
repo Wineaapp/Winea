@@ -12,18 +12,18 @@ export default async function sendEmail(formData: FormData) {
     
     try {
         // Dynamically import renderToString to work around Next.js restrictions
-        const { renderToString } = await import('react-dom/server');
-        const emailHtml = renderToString(<WaitinglistEmail />);
+        /* const { renderToString } = await import('react-dom/server');
+        const emailHtml = renderToString(<WaitinglistEmail />); */
 
         // Send the email
         await resend.emails.send({
             from: 'Winea <contact@winea.app>',
             to: receiverEmail, // Use the email from the form
             subject: 'Bienvenue sur Winea',
-            react: emailHtml
+            react: <WaitinglistEmail />
         });
         
-        // send a copy to your contact email
+        // sending a copy to your contact email
         await resend.emails.send({
             from: 'Winea <contact@winea.app>',
             to: 'contact@winea.app',
