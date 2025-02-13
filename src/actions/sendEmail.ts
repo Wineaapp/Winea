@@ -22,7 +22,7 @@ export default async function sendEmail(formData: FormData) {
             html: html
         });
         
-        // Optionally, also send a copy to your contact email
+        // send a copy to your contact email
         await resend.emails.send({
             from: 'Winea <contact@winea.app>',
             to: 'contact@winea.app',
