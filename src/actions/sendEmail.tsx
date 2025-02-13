@@ -4,11 +4,7 @@ import React from 'react';
 import { Resend } from "resend";
 import WaitinglistEmail from "@/email/WaitinglistEmail";
 
-const apiKey = process.env.RESEND_API_KEY;
-if (!apiKey) {
-    throw new Error("RESEND_API_KEY is not defined in the environment");
-}
-const resend = new Resend(apiKey);
+const resend = new Resend("re_QUNidFSs_C5dL3RDo1znEe22h9PMuhfkp");
 
 export default async function sendEmail(formData: FormData) {
     // Your email sending logic here
