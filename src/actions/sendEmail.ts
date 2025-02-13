@@ -13,7 +13,7 @@ export default async function sendEmail(formData: FormData) {
     
     try {
         // Render the email template to HTML
-        const html = await renderToString(React.createElement(WaitinglistEmail));
+        const html = renderToString(React.createElement(WaitinglistEmail));
 
         // Send the email
         await resend.emails.send({
