@@ -9,7 +9,7 @@ import {
     Preview,
     Section,
     Text,
-  } from '@react-email/components';
+} from "@react-email/components";
 
 
 const baseUrl = "https://www.winea.app/"
