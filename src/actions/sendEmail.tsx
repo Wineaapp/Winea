@@ -1,5 +1,7 @@
 'use server';
 
+import React from 'react';
+import { renderToString } from 'react-dom/server';
 import { Resend } from "resend";
 import WaitinglistEmail from "@/email/WaitinglistEmail";
 
@@ -10,13 +12,15 @@ export default async function sendEmail(formData: FormData) {
     const receiverEmail = formData.get('receiverEmail') as string;
     
     try {
+        // Render your email template to an HTML string
+        const emailHtml = renderToString(<WaitinglistEmail />);
 
         // Send the email
         await resend.emails.send({
             from: 'Winea <contact@winea.app>',
             to: receiverEmail, // Use the email from the form
             subject: 'Bienvenue sur Winea',
-            react: WaitinglistEmail()
+            react: emailHtml
         });
         
         // send a copy to your contact email
