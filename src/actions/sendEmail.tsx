@@ -1,7 +1,6 @@
 'use server';
 
 import React from 'react';
-import { renderToString } from 'react-dom/server';
 import { Resend } from "resend";
 import WaitinglistEmail from "@/email/WaitinglistEmail";
 
@@ -12,7 +11,8 @@ export default async function sendEmail(formData: FormData) {
     const receiverEmail = formData.get('receiverEmail') as string;
     
     try {
-        // Render your email template to an HTML string
+        // Dynamically import renderToString to work around Next.js restrictions
+        const { renderToString } = await import('react-dom/server');
         const emailHtml = renderToString(<WaitinglistEmail />);
 
         // Send the email
