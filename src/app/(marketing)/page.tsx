@@ -1,5 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
+import ScrollButton from "@/components/ScrollButton";
+import sendEmail from "@/actions/sendEmail";
 
 export default function Home() {
   return (
@@ -207,10 +209,19 @@ export default function Home() {
                   <div className="flex flex-col gap-8 items-center justify-center md:text-left lg:px-12">
                     <h2 className="font-extrabold text-3xl">Commencer maintenant 
                       et booster vos ventes à nos outils d&apos;analyse</h2>
-                    <div className="flex flex-col md:flex-row md:self-start gap-4">
-                      <Link href='#waitlist' className="bg-[#EFCC5B] text-xs text-black font-semibold py-4 px-6 rounded-full [@media(hover:hover)]:hover:bg-black [@media(hover:hover)]:hover:text-white active:bg-black active:text-white transition-all">Rejoignez la liste d&apos;attente</Link>
-                      <Link href='/' className="border-2 text-xs font-semibold py-4 px-6 rounded-full">Contactez-nous</Link>
-                    </div>
+                    <form 
+                      action={sendEmail}
+                      className="flex flex-col md:flex-row md:self-start gap-4">
+                      <input 
+                        className="border-2 text-xs font-semibold py-4 px-6 rounded-full"
+                        type="email"
+                        name="receiverEmail"
+                        placeholder="Votre e-mail"
+                        required
+                      />
+
+                      <ScrollButton />
+                    </form>
                   </div>
                   <Image
                     className="md:w-[40%]"
