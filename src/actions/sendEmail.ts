@@ -2,8 +2,9 @@
 import React from 'react';
 import { Resend } from "resend";
 import WaitinglistEmail from "@/email/WaitinglistEmail";
-import { renderAsync } from '@react-email/render';
-
+import { renderToString } from 'react-dom/server';
+/* import { renderAsync } from '@react-email/render';
+ */
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export default async function sendEmail(formData: FormData) {
@@ -12,7 +13,7 @@ export default async function sendEmail(formData: FormData) {
     
     try {
         // Render the email template to HTML
-        const html = await renderAsync(React.createElement(WaitinglistEmail));
+        const html = await renderToString(React.createElement(WaitinglistEmail));
 
         // Send the email
         await resend.emails.send({
