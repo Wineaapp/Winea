@@ -1,41 +1,12 @@
 import Image from "next/image"
-import Link from "next/link"
-import ScrollButton from "@/components/ScrollButton";
-import sendEmail from "@/actions/sendEmail";
+import Waitlist from "@/components/Waitlist";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
       <>
-          <header className="bg-[#7224D1] text-white">
-            <div className="py-4 layout">
-              <nav className="flex justify-between items-center">
-                  <Link href="/">
-                    <Image
-                      src="/winea_logo.svg"
-                      alt="logo"
-                      width={91}
-                      height={36}
-                    />
-                  </Link>
-                  <ul>
-                    <li>
-                      <Link 
-                        href="mailto:contact@winea.app" 
-                        className="border-2 text-xs py-4 px-6 rounded-full [@media(hover:hover)]:hover:bg-black active:bg-black transition"
-                      >
-                        Nous contacter
-                      </Link>
-                    </li>
-                  </ul>
-                </nav>
-
-                <section className="text-center pt-20 pb-36  md:px-20 flex flex-col justify-center items-center gap-8">
-                  <h1 className="font-extrabold text-3xl sm:text-5xl">Boostez votre <br /> e-commerce en Afrique grâce à notre outil d&apos;analyse</h1>
-                  <p className="font-thin sm:px-20 lg:px-59">Découvrez les produits, publicités et tendances adapté au marché africain</p>
-                  <Link href='#waitlist' className="bg-[#EFCC5B] text-xs text-black font-semibold py-4 px-6 rounded-full [@media(hover:hover)]:hover:bg-black [@media(hover:hover)]:hover:text-white active:bg-black active:text-white transition-all">Rejoignez la liste d&apos;attente</Link>
-                </section>
-            </div>
-          </header>
+          <Header></Header>
 
           <main>
             <div className="layout relative top-[-100px]">
@@ -50,8 +21,7 @@ export default function Home() {
                     height={735}
                   />
                 </div>
-              </div>
-              
+            </div>
             
             <section className="layout flex flex-col gap-16 sm:gap-32 pb-20">
               <article className="flex flex-col md:flex-row justify-between items-center gap-16">
@@ -206,22 +176,9 @@ export default function Home() {
 
             <section id="waitlist" className="bg-[#7224D1] text-white text-center py-16 px-4 rounded-t-3xl mt-16">
                 <div className="layout flex flex-col md:flex-row justify-center items-center gap-16">
-                  <div className="flex flex-col gap-8 items-center justify-center md:text-left lg:px-12">
-                    <h2 className="font-extrabold text-3xl">Commencer maintenant 
-                      et booster vos ventes à nos outils d&apos;analyse</h2>
-                    <form 
-                      action={sendEmail}
-                      className="flex flex-col md:flex-row md:self-start gap-4">
-                      <input 
-                        className="border-2 text-xs font-semibold py-4 px-6 rounded-full"
-                        type="email"
-                        name="receiverEmail"
-                        placeholder="Votre e-mail"
-                        required
-                      />
-
-                      <ScrollButton />
-                    </form>
+                  <div className="flex flex-col gap-8 items-center justify-center md:items-start md:text-left ">
+                    <h2 className="font-extrabold text-3xl">Rejoignez la liste d&apos;attente exclusive de Winea</h2>
+                    <Waitlist />
                   </div>
                   <Image
                     className="md:w-[40%]"
@@ -234,60 +191,7 @@ export default function Home() {
             </section>
           </main>
 
-          <footer className="layout">
-            <div className="text-xs py-8 flex flex-col md:flex-row justify-between items-center">
-              <div className="flex flex-col gap-4 justify-center md:flex-row md:gap-8 items-center">
-                <Link href="/">
-                  <Image
-                    className=""
-                    src="logo_purple.svg"
-                    alt="logo"
-                    width={65}
-                    height={26}
-                  />
-                </Link>
-
-                <div className="flex gap-4 md:gap-8 md:relative top-[0.3rem]">
-                  <Link
-                    href="#waitlist"
-                    className="[@media(hover:hover)]:hover:underline [@media(hover:hover)]:hover:text-purple-600 active:text-purple-600"
-                  >
-                    Voir la démo
-                  </Link>
-                  <Link 
-                    href="mailto:contact@winea.app"
-                    className="[@media(hover:hover)]:hover:underline [@media(hover:hover)]:hover:text-purple-600 active:text-purple-600"
-                  >
-                    Contactez-nous
-                  </Link>
-                </div>
-              </div>
-              <div className="mt-4 flex items-center gap-4 md:gap-8">
-                <Image
-                  src="facebook.svg"
-                  alt="facebook"
-                  width={24}
-                  height={24}
-                />
-                <Image
-                  src="linkedin.svg"
-                  alt="linkedin"
-                  width={24}
-                  height={24}
-                />
-                <Image
-                  src="instagram.svg"
-                  alt="instagram"
-                  width={24}
-                  height={24}
-                />
-              </div>
-            </div>
-            <hr className="w-full border-gray-300"/>
-            <p className="text-gray-400 text-xs my-4 text-center">&copy; 2024-Winea-Tout droits réservés | Mentions légales | Politique de confidentialité
-              | Conditions générales d&apos;utilisation
-            </p>
-          </footer>
+          <Footer></Footer>
     </>
 
     

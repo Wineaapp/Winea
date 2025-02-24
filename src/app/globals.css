@@ -15,3 +15,38 @@ body {
   max-width: 1200px;
   margin: 0 auto;
 }
+
+/* styles/globals.css */
+.PhoneInput {
+  border: 2px solid #e5e7eb; /* Adjust to match your input border color */
+  border-radius: 9999px; /* rounded-full */
+  font-size: 0.75rem; /* text-xs */
+  font-weight: 600; /* font-semibold */
+  overflow: hidden; /* clip internal overflow */
+}
+
+.PhoneInputInput {
+  padding: 0.5rem 1rem; /* equivalent to py-4 px-6 */
+  outline: none;
+  border: none;
+  background-color: transparent;
+  width: 100%;
+  border-radius: 9999px; /* match parent */
+}
+
+.PhoneInputCountry {
+  border-right: 2px solid #e5e7eb; /* keep the separation similar to your inputs */
+  padding: 0 0.75rem;
+}
+
+.PhoneInputCountrySelect {
+  background: transparent;
+  color: #000; /* force black text on the country section */
+  border: none;
+  outline: none;
+}
+
+/* Optionally adjust the dropdown arrow */
+.PhoneInputCountryIcon {
+  color: #000;
+}
