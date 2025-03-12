@@ -1,6 +1,6 @@
 Winea is a powerful analytics platform designed to help e-commerce businesses discover high-performing advertisements and trending products in real-time. Our solution empowers merchants to make data-driven decisions by providing comprehensive insights into successful marketing campaigns and profitable product opportunities.
 
-Live site: [winea.app](winea.app)
+Live site: [winea.app](https://winea.app)
 
 ## Preview
 
