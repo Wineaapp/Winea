@@ -1,6 +1,6 @@
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { notFound, redirect } from "next/navigation";
-import { db } from "../../lib/db";
+import { prisma } from "@/lib/db";
 
 const SyncUser = async () => {
   const { userId } = await auth();
@@ -13,7 +13,7 @@ const SyncUser = async () => {
     return notFound();
   }
 
-  await db.user.upsert({
+  await prisma.user.upsert({
     where: {
       emailAddress: user.emailAddresses[0]?.emailAddress ?? "",
     },
