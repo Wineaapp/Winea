@@ -9,15 +9,26 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@clerk/localizations": "^3.12.0",
+    "@clerk/nextjs": "^6.12.5",
     "@prisma/client": "^6.4.1",
+    "@radix-ui/react-dialog": "^1.1.6",
+    "@radix-ui/react-separator": "^1.1.2",
+    "@radix-ui/react-slot": "^1.1.2",
+    "@radix-ui/react-tooltip": "^1.1.8",
     "@react-email/components": "^0.0.33",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.479.0",
     "next": "^15.1.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-icons": "^5.5.0",
     "react-phone-input-2": "^2.15.1",
     "react-phone-number-input": "^3.4.11",
-    "resend": "^4.1.2"
+    "resend": "^4.1.2",
+    "tailwind-merge": "^3.0.2",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
