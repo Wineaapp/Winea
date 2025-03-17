@@ -9,7 +9,7 @@ import {
   Store,
   Share2,
 } from "lucide-react";
-import { UserButton } from "@clerk/nextjs";
+import { UserButton, useClerk } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 
 import {
@@ -26,6 +26,7 @@ import {
 
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 // Menu items.
 const items = [
@@ -68,6 +69,12 @@ const items = [
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const { signOut } = useClerk();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   return (
     <Sidebar>
@@ -117,9 +124,31 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="p-4 flex flex-row text-xs items-center">
-        <UserButton afterSignOutUrl="/" />
-        <span className="text-gray-500 hover:text-white">Se déconnecter</span>
+      <SidebarFooter className="p-4 mb-8 flex flex-row text-xs items-center">
+        {isMounted && (
+          <div
+            id="user-button-container"
+            style={{ position: "relative", zIndex: 9999 }}
+          >
+            <UserButton
+              afterSignOutUrl="/"
+              appearance={{
+                elements: {
+                  userButtonPopoverCard: "!fixed",
+                  userButtonPopoverActionButtonText: "!pointer-events-auto",
+                  userButtonPopoverActionButtonIcon: "!pointer-events-auto",
+                  userButtonPopoverActionButton: "!pointer-events-auto",
+                },
+              }}
+            />
+          </div>
+        )}
+        <button
+          onClick={() => signOut()}
+          className="text-gray-500 hover:text-white ml-2 cursor-pointer"
+        >
+          Se déconnecter
+        </button>
       </SidebarFooter>
     </Sidebar>
   );
