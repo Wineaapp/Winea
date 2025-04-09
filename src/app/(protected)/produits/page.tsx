@@ -1,37 +1,39 @@
+"use client";
+
 import SearchForm from "@/components/SearchForm";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/Tabs";
+import { JumiaProduct } from "@/lib/types";
+import { useState } from "react";
+import Image from "next/image";
 
-export default function page() {
+export default function Page() {
+  const [searchResults, setSearchResults] = useState<JumiaProduct[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSearchResults = (results: JumiaProduct[]) => {
+    setSearchResults(results);
+    setIsLoading(false); // Set loading to false after results arrive
+  };
+
+  const handleSearchStart = () => {
+    setIsLoading(true); // Set loading to true when search starts
+    setSearchResults([]); // Clear previous results
+  };
+
   return (
     <div className="layout">
       <h1 className="text-3xl font-extrabold mb-2">Produits</h1>
-      <SearchForm />
-      <Tabs defaultValue="account" className="w-full mx-auto my-4">
+      <SearchForm
+        onResults={handleSearchResults}
+        onSearchStart={handleSearchStart}
+      />
+      <div className="text-xs mb-2">
+        Loading state: {isLoading ? "true" : "false"}
+      </div>
+      <Tabs defaultValue="jumia" className="w-full mx-auto my-4">
         <TabsList>
           <TabsTrigger
-            value="account"
-            activeColor="#1778F2"
-            className="flex gap-2 items-center"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="15"
-              height="15"
-              viewBox="0 0 193 193"
-              id="facebook"
-            >
-              <g>
-                <rect width="193" height="193" fill="#1778f2" rx="96.5" />
-                <path
-                  fill="#fdfdfd"
-                  d="M104.195 150.969V99.314h17.339l2.6-20.131h-19.939V66.33c0-5.828 1.619-9.8 9.977-9.8h10.66v-18a142.87 142.87 0 0 0-15.534-.792c-15.37 0-25.892 9.381-25.892 26.61v14.835H66.023v20.131h17.383v51.655h20.789Z"
-                />
-              </g>
-            </svg>
-            Marketplace
-          </TabsTrigger>
-          <TabsTrigger
-            value="password"
+            value="jumia"
             activeColor="#FF9900"
             className="flex gap-2 items-center"
           >
@@ -80,26 +82,50 @@ export default function page() {
             Shopify
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="account">
-          <div className="p-4 rounded-lg border mt-2">
-            <h3 className="text-lg font-medium">Account Settings</h3>
-            <p className="text-sm text-gray-500 mt-1">
-              Manage your account settings and preferences.
-            </p>
-          </div>
-        </TabsContent>
-        <TabsContent value="password">
+        <TabsContent value="jumia">
           <div className="p-4 rounded-lg border mt-2">
             <h3 className="text-lg font-medium">Jumia</h3>
-            <p className="text-sm text-gray-500 mt-1">En cours</p>
+            {isLoading ? (
+              <p className="text-sm text-gray-500 mt-1">Chargement...</p>
+            ) : searchResults.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                {searchResults.map((product, index) => (
+                  <div key={index} className="border rounded-md p-3 shadow-sm">
+                    {product.product.image && (
+                      <Image
+                        src={product.product.image}
+                        alt={"Product image"}
+                        width={100}
+                        height={100}
+                        className="w-full h-40 object-cover rounded-md mb-2"
+                      />
+                    )}
+                    <h4 className="font-medium">{product.product.name}</h4>
+                    {product.product.prices.price && (
+                      <p className="text-lg font-bold mt-1">
+                        {product.product.prices.price}
+                      </p>
+                    )}
+                    {/* {product.location && (
+                      <p className="text-sm text-gray-500 mt-1">
+                        {product.location.reverse_geocode.city}
+                      </p>
+                    )} */}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-gray-500 mt-1">
+                Aucun résultat trouvé. Effectuez une recherche pour voir les
+                produits.
+              </p>
+            )}
           </div>
         </TabsContent>
-        <TabsContent value="settings">
+        <TabsContent value="shopify">
           <div className="p-4 rounded-lg border mt-2">
-            <h3 className="text-lg font-medium">General Settings</h3>
-            <p className="text-sm text-gray-500 mt-1">
-              Configure your general application settings.
-            </p>
+            <h3 className="text-lg font-medium">Shopify</h3>
+            <p className="text-sm text-gray-500 mt-1">En cours</p>
           </div>
         </TabsContent>
       </Tabs>
