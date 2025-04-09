@@ -19,7 +19,7 @@ export default function Home() {
               alt="dashboard"
               width={1116}
               height={735}
-              loading="eager"
+              priority
             />
           </div>
         </div>
@@ -42,7 +42,7 @@ export default function Home() {
               alt="feature1"
               width={558}
               height={474}
-              loading="lazy"
+              priority
             />
           </article>
 
@@ -64,7 +64,7 @@ export default function Home() {
               alt="feature2"
               width={558}
               height={474}
-              loading="lazy"
+              priority
             />
           </article>
 
@@ -86,7 +86,7 @@ export default function Home() {
               alt="feature3"
               width={558}
               height={474}
-              loading="lazy"
+              priority
             />
           </article>
 
@@ -107,7 +107,7 @@ export default function Home() {
               alt="feature4"
               width={558}
               height={474}
-              loading="lazy"
+              priority
             />
           </article>
 
@@ -128,7 +128,7 @@ export default function Home() {
               alt="feature5"
               width={558}
               height={474}
-              loading="lazy"
+              priority
             />
           </article>
 
@@ -150,7 +150,7 @@ export default function Home() {
               alt="feature6"
               width={558}
               height={474}
-              loading="lazy"
+              priority
             />
           </article>
         </section>
@@ -164,6 +164,7 @@ export default function Home() {
                 alt="rapidite"
                 width={55}
                 height={55}
+                priority
               />
               <h3 className="font-extrabold text-2xl">Rapidité</h3>
               <p>
@@ -177,7 +178,7 @@ export default function Home() {
                 alt="efficacite"
                 width={55}
                 height={55}
-                loading="lazy"
+                priority
               />
               <h3 className="font-extrabold text-2xl">Efficacité</h3>
               <p>
@@ -191,7 +192,7 @@ export default function Home() {
                 alt="adaptabilite"
                 width={55}
                 height={55}
-                loading="lazy"
+                priority
               />
               <h3 className="font-extrabold text-2xl">Adaptabilité</h3>
               <p>
@@ -205,7 +206,7 @@ export default function Home() {
                 alt="simplicite"
                 width={55}
                 height={55}
-                loading="lazy"
+                priority
               />
               <h3 className="font-extrabold text-2xl">Simplicité</h3>
               <p>
@@ -233,7 +234,7 @@ export default function Home() {
               alt="personne"
               width={558}
               height={397}
-              loading="lazy"
+              priority
             />
           </div>
         </section>

@@ -14,6 +14,7 @@ export default function Footer() {
               alt="logo"
               width={65}
               height={26}
+              priority
             />
           </Link>
 
