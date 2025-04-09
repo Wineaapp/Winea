@@ -2,8 +2,17 @@ import Image from "next/image";
 import Waitlist from "@/components/Waitlist";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { currentUser } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+export default async function Home() {
+  // Check if user is authenticated
+  const user = await currentUser();
+
+  // If user is logged in, redirect to dashboard
+  if (user) {
+    redirect("/dashboard");
+  }
   return (
     <>
       <Header></Header>

@@ -2,13 +2,15 @@ import type { NextConfig } from "next";
 /* import { resolve } from "path"; */
 
 const nextConfig: NextConfig = {
- /*  webpack: (config, { isServer }) => {
-    if (isServer) {
-      config.resolve.alias['react-dom/server'] = resolve(__dirname, 'server/react-dom-server-shim.js');
-    }
-    return config;
-  }, */
-  // You can remove serverExternalPackages if it causes issues
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "ng.jumia.is",
+        pathname: "**",
+      },
+    ],
+  },
 };
 
 export default nextConfig;
