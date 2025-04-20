@@ -3,6 +3,7 @@
 import SearchForm from "@/components/SearchForm";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/Tabs";
 import { JumiaProduct } from "@/lib/types";
+import { searchJumiaProducts } from "@/actions/searchProducts";
 import { useState } from "react";
 import Image from "next/image";
 
@@ -26,6 +27,8 @@ export default function Page() {
       <SearchForm
         onResults={handleSearchResults}
         onSearchStart={handleSearchStart}
+        searchFunction={searchJumiaProducts}
+        placeholder="Rechercher un produit"
       />
       <div className="text-xs mb-2">
         Loading state: {isLoading ? "true" : "false"}

@@ -9,6 +9,26 @@ const nextConfig: NextConfig = {
         hostname: "ng.jumia.is",
         pathname: "**",
       },
+      {
+        protocol: "https",
+        hostname: "**.fbcdn.net",
+        pathname: "**",
+      },
+      {
+        protocol: "https",
+        hostname: "scontent-*.xx.fbcdn.net",
+        pathname: "**",
+      },
+      {
+        protocol: "https",
+        hostname: "scontent.cdninstagram.com",
+        pathname: "**",
+      },
+      {
+        protocol: "https",
+        hostname: "scontent-*.cdninstagram.com",
+        pathname: "**",
+      },
     ],
   },
 };

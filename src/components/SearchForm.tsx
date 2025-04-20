@@ -1,27 +1,39 @@
-import { Search } from "lucide-react";
-import { JumiaProduct } from "@/lib/types";
-import { searchJumiaProducts } from "@/actions/searchProducts";
+"use client";
 
-type SearchFormProps = {
-  onResults?: (results: JumiaProduct[]) => void;
-  /*   setIsLoading: (isLoading: boolean) => void;*/
+import { Search } from "lucide-react";
+
+type SearchFormProps<T = unknown> = {
+  onResults?: (results: T[]) => void;
   onSearchStart?: () => void;
+  searchFunction?: (query: string) => Promise<T[]>;
+  placeholder?: string;
 };
 
-export default function SearchForm({
+export default function SearchForm<T = unknown>({
   onResults,
   onSearchStart,
-}: SearchFormProps) {
-  const handleSearch = async () => {
+  searchFunction,
+  placeholder = "Rechercher un produit",
+}: SearchFormProps<T>) {
+  const handleSearch = async (formData: FormData) => {
     // Call onSearchStart immediately
     if (onSearchStart) {
       onSearchStart();
     }
 
     try {
-      const results = await searchJumiaProducts();
-      if (onResults) {
-        onResults(results);
+      const query = formData.get("query")?.toString() || "";
+
+      if (searchFunction) {
+        const results = await searchFunction(query);
+        if (onResults) {
+          onResults(results);
+        }
+      } else {
+        console.warn("No search function provided");
+        if (onResults) {
+          onResults([]);
+        }
       }
     } catch (error) {
       console.error("Search error:", error);
@@ -33,7 +45,8 @@ export default function SearchForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault(); // Empêcher le comportement par défaut du formulaire
-    handleSearch();
+    const formData = new FormData(e.target as HTMLFormElement);
+    handleSearch(formData);
   };
 
   return (
@@ -46,7 +59,7 @@ export default function SearchForm({
           className="bg-[#ECECEC] w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:border-stone-700"
           type="text"
           name="query"
-          placeholder="Rechercher un produit"
+          placeholder={placeholder}
         />
         {/* <button
           type="button"
