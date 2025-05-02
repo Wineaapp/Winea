@@ -1,16 +1,46 @@
 "use client";
 import SearchForm from "@/components/SearchForm";
+import FilterBar from "@/components/FilterBar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/Tabs";
 import { BsFacebook } from "react-icons/bs";
 /* import { BsInstagram } from "react-icons/bs"; */
-import { searchAds } from "@/actions/searchProducts";
+import { searchFacebookAds } from "@/actions/searchProducts";
 import { FacebookAd } from "@/lib/types";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 
 export default function AdsPage() {
   const [searchResults, setSearchResults] = useState<FacebookAd[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [startDate, setStartDate] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState("CM");
+  const [selectedStatus, setSelectedStatus] = useState("all");
+  const [selectedLanguage, setSelectedLanguage] = useState("en");
+
+  const fetchAds = useCallback(
+    async (query: string = "") => {
+      setIsLoading(true);
+      try {
+        const results = await searchFacebookAds(
+          query,
+          startDate,
+          selectedCountry,
+          selectedStatus,
+          selectedLanguage
+        );
+        setSearchResults(results);
+      } catch (error) {
+        console.error("Error fetching ads:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [startDate, selectedCountry, selectedStatus, selectedLanguage]
+  );
+
+  useEffect(() => {
+    fetchAds();
+  }, [fetchAds]);
 
   const handleSearchResults = (results: FacebookAd[]) => {
     setSearchResults(results);
@@ -26,10 +56,23 @@ export default function AdsPage() {
     <div className="layout">
       <h1 className="text-3xl font-bold mb-2">Publicités</h1>
       <SearchForm
-        searchFunction={searchAds}
+        searchFunction={(query) =>
+          searchFacebookAds(query, startDate, selectedCountry, selectedStatus)
+        }
         placeholder="Rechercher une publicité"
         onResults={handleSearchResults}
         onSearchStart={handleSearchStart}
+      />
+
+      <FilterBar
+        startDate={startDate}
+        onStartDateChange={(date) => setStartDate(date)}
+        selectedCountry={selectedCountry}
+        onCountryChange={(country) => setSelectedCountry(country)}
+        selectedStatus={selectedStatus}
+        onStatusChange={(status) => setSelectedStatus(status)}
+        selectedLanguage={selectedLanguage}
+        onLanguageChange={(language) => setSelectedLanguage(language)}
       />
 
       <Tabs defaultValue="facebook" className="w-full mx-auto my-4">
@@ -94,113 +137,147 @@ export default function AdsPage() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="facebook">
-          <div className="p-4 mt-2">
+          <div className="p-8">
             {isLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {[1, 2, 3, 4, 5, 6].map((item) => (
                   <div
                     key={item}
-                    className="border bg-white rounded-md p-4 shadow-sm"
+                    className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-lg hover:border-gray-200"
                   >
-                    <div className="flex items-center mb-3">
-                      <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse mr-3"></div>
-                      <div className="h-5 bg-gray-200 rounded w-32 animate-pulse"></div>
-                    </div>
-
-                    <div className="w-full h-40 bg-gray-200 rounded-md mb-3 animate-pulse"></div>
-
-                    <div className="space-y-2 mb-3">
-                      <div className="h-3 bg-gray-200 rounded animate-pulse"></div>
-                      <div className="h-3 bg-gray-200 rounded animate-pulse w-5/6"></div>
-                      <div className="h-3 bg-gray-200 rounded animate-pulse w-4/6"></div>
-                    </div>
-
-                    <div className="space-y-2 mb-3">
-                      <div className="h-2 bg-gray-200 rounded animate-pulse w-24"></div>
-                      <div className="h-2 bg-gray-200 rounded animate-pulse w-20"></div>
-                    </div>
-
-                    <div className="mt-3">
-                      <div className="h-10 bg-purple-200 rounded-md animate-pulse"></div>
+                    <div className="animate-pulse">
+                      <div className="h-52 bg-gray-100"></div>
+                      <div className="p-5">
+                        <div className="flex items-center space-x-4 mb-5">
+                          <div className="w-12 h-12 rounded-full bg-gray-100 ring-2 ring-gray-50"></div>
+                          <div className="flex-1 space-y-2">
+                            <div className="h-4 bg-gray-100 rounded-md w-3/4"></div>
+                            <div className="h-3 bg-gray-100 rounded-md w-1/2"></div>
+                          </div>
+                        </div>
+                        <div className="space-y-3 mb-5">
+                          <div className="h-3 bg-gray-100 rounded-md"></div>
+                          <div className="h-3 bg-gray-100 rounded-md w-5/6"></div>
+                          <div className="h-3 bg-gray-100 rounded-md w-4/6"></div>
+                        </div>
+                        <div className="h-10 bg-gray-50 rounded-lg w-full"></div>
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
             ) : searchResults.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                {searchResults.map((ad, index) => (
-                  <div
-                    key={index}
-                    className="border bg-white rounded-md p-4 shadow-sm"
-                  >
-                    <div className="flex items-center mb-3">
-                      {ad.snapshot.page_profile_picture_url && (
-                        <Image
-                          src={ad.snapshot.page_profile_picture_url}
-                          alt="Page profile"
-                          width={40}
-                          height={40}
-                          className="rounded-full mr-3"
-                        />
-                      )}
-                      <div>
-                        <h4 className="font-medium">{ad.page_name}</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {searchResults.map((ad, index) => {
+                  if (
+                    ad.snapshot.body?.text?.includes("{{") ||
+                    ad.snapshot.body?.text?.includes("}}")
+                  ) {
+                    return null;
+                  }
+
+                  return (
+                    <div
+                      key={index}
+                      className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-lg hover:border-gray-200"
+                    >
+                      {ad.snapshot.images &&
+                        ad.snapshot.images.length > 0 &&
+                        ad.snapshot.images[0].url && (
+                          <div className="relative h-52 bg-gray-50">
+                            <Image
+                              src={ad.snapshot.images[0].url}
+                              alt="Ad image"
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        )}
+                      <div className="p-5">
+                        <div className="flex items-center space-x-4 mb-5">
+                          {ad.snapshot.page_profile_picture_url && (
+                            <div className="relative w-12 h-12 ring-2 ring-gray-50 rounded-full overflow-hidden">
+                              <Image
+                                src={ad.snapshot.page_profile_picture_url}
+                                alt="Page profile"
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                          )}
+                          <div>
+                            <h4 className="font-semibold text-gray-900 mb-1">
+                              {ad.page_name}
+                            </h4>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-xs text-gray-500">
+                                {new Date(
+                                  ad.start_date * 1000
+                                ).toLocaleDateString()}
+                              </span>
+                              {ad.end_date && (
+                                <span className="text-xs text-gray-500">
+                                  {new Date(
+                                    ad.end_date * 1000
+                                  ).toDateString() ===
+                                    new Date().toDateString() ||
+                                  new Date(ad.end_date * 1000) > new Date()
+                                    ? "• En cours"
+                                    : `• ${new Date(ad.end_date * 1000).toLocaleDateString()}`}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {ad.snapshot.body?.text && (
+                          <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-5">
+                            {ad.snapshot.body.text}
+                          </p>
+                        )}
+
+                        <button
+                          className="w-full bg-purple-600 text-white py-2.5 px-4 rounded-lg font-medium
+                    hover:bg-purple-700 transition-colors duration-200 flex items-center justify-center space-x-2"
+                          onClick={() => {
+                            if (ad.url) {
+                              window.open(
+                                ad.url,
+                                "_blank",
+                                "noopener,noreferrer"
+                              );
+                            } else {
+                              console.log("URL de l'annonce non disponible");
+                            }
+                          }}
+                        >
+                          <span>Voir l&apos;annonce</span>
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 5l7 7-7 7"
+                            />
+                          </svg>
+                        </button>
                       </div>
                     </div>
-
-                    {ad.snapshot.images &&
-                      ad.snapshot.images.length > 0 &&
-                      ad.snapshot.images[0].url && (
-                        <div className="mb-3">
-                          <Image
-                            src={ad.snapshot.images[0].url}
-                            alt="Ad image"
-                            width={300}
-                            height={200}
-                            className="w-full h-40 object-cover rounded-md"
-                          />
-                        </div>
-                      )}
-
-                    {ad.snapshot.body?.text && (
-                      <p className="text-sm mb-3 line-clamp-3">
-                        {ad.snapshot.body.text}
-                      </p>
-                    )}
-
-                    <div className="text-xs text-gray-500 mb-2">
-                      <p>
-                        Début:{" "}
-                        {new Date(ad.start_date * 1000).toLocaleDateString()}
-                      </p>
-                      {ad.end_date && (
-                        <p>
-                          Fin:{" "}
-                          {new Date(ad.end_date * 1000).toDateString() ===
-                            new Date().toDateString() ||
-                          new Date(ad.end_date * 1000) > new Date()
-                            ? "En cours"
-                            : new Date(ad.end_date * 1000).toLocaleDateString()}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="flex justify-center mt-3">
-                      <button
-                        className="bg-purple-600 text-white px-4 py-2 rounded-md w-full"
-                        onClick={() => {
-                          // We'll implement this functionality later
-                          console.log("View ad details:", ad.ad_archive_id);
-                        }}
-                      >
-                        Voir l&apos;annonce
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             ) : (
-              <p className="text-sm text-gray-500 mt-1">Faites une recherche</p>
+              <div className="text-center py-16">
+                <p className="text-gray-500 text-lg">
+                  Faites une recherche pour voir les publicités
+                </p>
+              </div>
             )}
           </div>
         </TabsContent>
