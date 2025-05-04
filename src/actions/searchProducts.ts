@@ -2,43 +2,37 @@
 
 import { ApifyClient } from "apify-client";
 import { FacebookAd } from "@/lib/types";
-import { cache } from "react";
+import { unstable_cache } from "next/cache";
+
 // Initialize the ApifyClient with API token
 const client = new ApifyClient({
   token: process.env.APIFY_TOKEN,
 });
 
-let staticDigitalAds: FacebookAd[] | null = null;
-
 // Function to fetch ads
-async function fetchAds(
-  query: string,
-  startDate: string,
-  country: string,
-  status: string,
-  language: string
-) {
-  const input = {
-    searchUrl: `https://www.facebook.com/ads/library/?active_status=${status}&ad_type=all&content_languages[0]=${language}&country=${country}&is_targeted_country=false&media_type=all&q=${encodeURIComponent(query)}&search_type=keyword_unordered${startDate ? `&start_date[max]=${startDate}` : ""}`,
-    maxItems: 20,
-  };
+const fetchAdsWithCache = unstable_cache(
+  async (
+    query: string,
+    startDate: string,
+    country: string,
+    status: string,
+    language: string
+  ) => {
+    const input = {
+      searchUrl: `https://www.facebook.com/ads/library/?active_status=${status}&ad_type=all&content_languages[0]=${language}&country=${country}&is_targeted_country=false&media_type=all&q=${encodeURIComponent(query)}&search_type=keyword_unordered${startDate ? `&start_date[max]=${startDate}` : ""}`,
+      maxItems: 20,
+    };
 
-  const run = await client.actor("CfCwPWpfjpxQhOboS").call(input);
-  const { items } = await client.dataset(run.defaultDatasetId).listItems();
-  return items;
-}
-
-// Initialize static data at build time
-if (process.env.NODE_ENV === "production") {
-  fetchAds("digital", "2025-04-01", "CM", "all", "fr")
-    .then((items) => {
-      staticDigitalAds = items as FacebookAd[];
-    })
-    .catch(console.error);
-}
-
-// Cached fetch function for dynamic queries
-const fetchAdsWithCache = cache(fetchAds);
+    const run = await client.actor("CfCwPWpfjpxQhOboS").call(input);
+    const { items } = await client.dataset(run.defaultDatasetId).listItems();
+    return items;
+  },
+  [],
+  {
+    revalidate: 3600, // Cache for 1 hour
+    tags: ["facebook-ads"], // Tag for cache invalidation
+  }
+);
 
 export async function searchFacebookAds(
   query: string = "digital",
@@ -53,20 +47,6 @@ export async function searchFacebookAds(
       throw new Error("Apify token is not configured on the server.");
     }
 
-    // Return static data for the default query in production
-    if (
-      process.env.NODE_ENV === "production" &&
-      query === "digital" &&
-      startDate === "2025-04-01" &&
-      country === "CM" &&
-      status === "all" &&
-      language === "fr" &&
-      staticDigitalAds
-    ) {
-      return staticDigitalAds;
-    }
-
-    // Fallback to cached dynamic fetch for other queries
     const items = await fetchAdsWithCache(
       query,
       startDate,
