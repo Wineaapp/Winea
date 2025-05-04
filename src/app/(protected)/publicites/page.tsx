@@ -7,22 +7,23 @@ import { BsFacebook } from "react-icons/bs";
 import { searchFacebookAds } from "@/actions/searchProducts";
 import { FacebookAd } from "@/lib/types";
 import { useState, useEffect, useCallback } from "react";
+import { Heart } from "lucide-react";
 import Image from "next/image";
 
 export default function AdsPage() {
   const [searchResults, setSearchResults] = useState<FacebookAd[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [startDate, setStartDate] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("CM");
   const [selectedStatus, setSelectedStatus] = useState("all");
-  const [selectedLanguage, setSelectedLanguage] = useState("en");
+  const [selectedLanguage, setSelectedLanguage] = useState("fr");
 
   const fetchAds = useCallback(
-    async (query: string = "") => {
+    async (query?: string) => {
       setIsLoading(true);
       try {
         const results = await searchFacebookAds(
-          query,
+          query || "digital",
           startDate,
           selectedCountry,
           selectedStatus,
@@ -57,7 +58,13 @@ export default function AdsPage() {
       <h1 className="text-3xl font-bold mb-2">Publicités</h1>
       <SearchForm
         searchFunction={(query) =>
-          searchFacebookAds(query, startDate, selectedCountry, selectedStatus)
+          searchFacebookAds(
+            query,
+            startDate,
+            selectedCountry,
+            selectedStatus,
+            selectedLanguage
+          )
         }
         placeholder="Rechercher une publicité"
         onResults={handleSearchResults}
@@ -168,114 +175,203 @@ export default function AdsPage() {
               </div>
             ) : searchResults.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {searchResults.map((ad, index) => {
-                  if (
-                    ad.snapshot.body?.text?.includes("{{") ||
-                    ad.snapshot.body?.text?.includes("}}")
-                  ) {
-                    return null;
-                  }
+                {searchResults
+                  .filter((ad) => {
+                    if (
+                      ad.snapshot.body?.text?.includes("{{") ||
+                      ad.snapshot.body?.text?.includes("}}")
+                    ) {
+                      return false;
+                    }
+                    const hasImages =
+                      ad.snapshot.images?.[0]?.original_image_url ||
+                      ad.snapshot.extra_images?.[0]?.url;
+                    const hasVideos =
+                      ad.snapshot.videos?.[0] || ad.snapshot.extra_videos?.[0];
+                    return hasImages || hasVideos;
+                  })
+                  .map((ad, index) => {
+                    return (
+                      <div
+                        key={index}
+                        className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-lg hover:border-gray-200"
+                      >
+                        {(() => {
+                          const mainVideo = ad.snapshot.videos?.[0];
+                          const extraVideo = ad.snapshot.extra_videos?.[0];
+                          const mainImage = ad.snapshot.images?.[0];
+                          const extraImage = ad.snapshot.extra_images?.[0];
 
-                  return (
-                    <div
-                      key={index}
-                      className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-lg hover:border-gray-200"
-                    >
-                      {ad.snapshot.images &&
-                        ad.snapshot.images.length > 0 &&
-                        ad.snapshot.images[0].url && (
-                          <div className="relative h-52 bg-gray-50">
-                            <Image
-                              src={ad.snapshot.images[0].url}
-                              alt="Ad image"
-                              fill
-                              className="object-cover"
-                            />
-                          </div>
-                        )}
-                      <div className="p-5">
-                        <div className="flex items-center space-x-4 mb-5">
-                          {ad.snapshot.page_profile_picture_url && (
-                            <div className="relative w-12 h-12 ring-2 ring-gray-50 rounded-full overflow-hidden">
-                              <Image
-                                src={ad.snapshot.page_profile_picture_url}
-                                alt="Page profile"
-                                fill
-                                className="object-cover"
-                              />
-                            </div>
-                          )}
-                          <div>
-                            <h4 className="font-semibold text-gray-900 mb-1">
-                              {ad.page_name}
-                            </h4>
-                            <div className="flex items-center space-x-2">
-                              <span className="text-xs text-gray-500">
-                                {new Date(
-                                  ad.start_date * 1000
-                                ).toLocaleDateString()}
-                              </span>
-                              {ad.end_date && (
+                          if (
+                            mainVideo &&
+                            (mainVideo.video_hd_url || mainVideo.video_sd_url)
+                          ) {
+                            return (
+                              <div className="relative h-52 bg-gray-50">
+                                <video
+                                  src={
+                                    mainVideo.video_hd_url ||
+                                    mainVideo.video_sd_url
+                                  }
+                                  poster={mainVideo.video_preview_image_url}
+                                  controls
+                                  className="w-full h-full object-cover"
+                                />
+                                <button
+                                  className="absolute top-4 right-4 p-2 rounded-full bg-white/80 hover:bg-white transition-colors duration-200 z-10"
+                                  onClick={() => {}}
+                                >
+                                  <Heart className="w-6 h-6 text-gray-600 hover:text-red-500 transition-colors duration-200" />
+                                </button>
+                              </div>
+                            );
+                          }
+
+                          if (extraVideo?.url) {
+                            return (
+                              <div className="relative h-52 bg-gray-50">
+                                <video
+                                  src={extraVideo.url}
+                                  poster={extraVideo.thumbnail_url}
+                                  controls
+                                  className="w-full h-full object-cover"
+                                />
+                                <button
+                                  className="absolute top-4 right-4 p-2 rounded-full bg-white/80 hover:bg-white transition-colors duration-200 z-10"
+                                  onClick={() => {}}
+                                >
+                                  <Heart className="w-6 h-6 text-gray-600 hover:text-red-500 transition-colors duration-200" />
+                                </button>
+                              </div>
+                            );
+                          }
+
+                          if (mainImage?.original_image_url) {
+                            return (
+                              <div className="relative h-52 bg-gray-50">
+                                <Image
+                                  src={mainImage.original_image_url}
+                                  alt="Ad image"
+                                  fill
+                                  className="object-cover"
+                                />
+                                <button
+                                  className="absolute top-4 right-4 p-2 rounded-full bg-white/80 hover:bg-white transition-colors duration-200 z-10"
+                                  onClick={() => {}}
+                                >
+                                  <Heart className="w-6 h-6 text-gray-600 hover:text-red-500 transition-colors duration-200" />
+                                </button>
+                              </div>
+                            );
+                          }
+
+                          if (extraImage?.url) {
+                            return (
+                              <div className="relative h-52 bg-gray-50">
+                                <Image
+                                  src={extraImage.url}
+                                  alt={extraImage.alt_text || "Ad image"}
+                                  fill
+                                  className="object-cover"
+                                />
+                                <button
+                                  className="absolute top-4 right-4 p-2 rounded-full bg-white/80 hover:bg-white transition-colors duration-200 z-10"
+                                  onClick={() => {}}
+                                >
+                                  <Heart className="w-6 h-6 text-gray-600 hover:text-red-500 transition-colors duration-200" />
+                                </button>
+                              </div>
+                            );
+                          }
+
+                          return null;
+                        })()}
+                        <div className="p-5">
+                          <div className="flex items-center space-x-4 mb-5">
+                            {ad.snapshot.page_profile_picture_url && (
+                              <div className="relative w-12 h-12 ring-2 ring-gray-50 rounded-full overflow-hidden">
+                                <Image
+                                  src={ad.snapshot.page_profile_picture_url}
+                                  alt="Page profile"
+                                  fill
+                                  className="object-cover"
+                                />
+                              </div>
+                            )}
+                            <div>
+                              <h4 className="font-semibold text-gray-900 mb-1">
+                                {ad.page_name}
+                              </h4>
+                              <div className="flex items-center space-x-2">
                                 <span className="text-xs text-gray-500">
-                                  {new Date(
-                                    ad.end_date * 1000
-                                  ).toDateString() ===
-                                    new Date().toDateString() ||
-                                  new Date(ad.end_date * 1000) > new Date()
-                                    ? "• En cours"
-                                    : `• ${new Date(ad.end_date * 1000).toLocaleDateString()}`}
+                                  {ad.start_date
+                                    ? new Date(
+                                        ad.start_date * 1000
+                                      ).toLocaleDateString()
+                                    : "Date non disponible"}
                                 </span>
-                              )}
+                                {ad.end_date && (
+                                  <span className="text-xs text-gray-500">
+                                    {new Date(
+                                      ad.end_date * 1000
+                                    ).toDateString() ===
+                                      new Date().toDateString() ||
+                                    new Date(ad.end_date * 1000) > new Date()
+                                      ? "• En cours"
+                                      : `• ${new Date(ad.end_date * 1000).toLocaleDateString()}`}
+                                  </span>
+                                )}
+                              </div>
                             </div>
                           </div>
-                        </div>
 
-                        {ad.snapshot.body?.text && (
-                          <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-5">
-                            {ad.snapshot.body.text}
-                          </p>
-                        )}
+                          {ad.snapshot.body?.text && (
+                            <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-5">
+                              {ad.snapshot.body.text}
+                            </p>
+                          )}
 
-                        <button
-                          className="w-full bg-purple-600 text-white py-2.5 px-4 rounded-lg font-medium
+                          <button
+                            className="w-full bg-purple-600 text-white py-2.5 px-4 rounded-lg font-medium
                     hover:bg-purple-700 transition-colors duration-200 flex items-center justify-center space-x-2"
-                          onClick={() => {
-                            if (ad.url) {
-                              window.open(
-                                ad.url,
-                                "_blank",
-                                "noopener,noreferrer"
-                              );
-                            } else {
-                              console.log("URL de l'annonce non disponible");
-                            }
-                          }}
-                        >
-                          <span>Voir l&apos;annonce</span>
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
+                            onClick={() => {
+                              const adUrl = ad.url || ad.snapshot.link_url;
+                              if (adUrl) {
+                                window.open(
+                                  adUrl,
+                                  "_blank",
+                                  "noopener,noreferrer"
+                                );
+                              } else {
+                                console.log("URL de l'annonce non disponible");
+                              }
+                            }}
                           >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 5l7 7-7 7"
-                            />
-                          </svg>
-                        </button>
+                            <span>Voir l&apos;annonce</span>
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M9 5l7 7-7 7"
+                              />
+                            </svg>
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
               </div>
             ) : (
               <div className="text-center py-16">
                 <p className="text-gray-500 text-lg">
-                  Faites une recherche pour voir les publicités
+                  Aucun résultat. Faites une recherche pour voir les publicités
                 </p>
               </div>
             )}

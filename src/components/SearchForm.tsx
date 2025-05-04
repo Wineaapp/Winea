@@ -22,7 +22,14 @@ export default function SearchForm<T = unknown>({
     }
 
     try {
-      const query = formData.get("query")?.toString() || "";
+      const query = formData.get("query")?.toString().trim() || "";
+      // Vérifier si la requête n'est pas vide après le trim
+      if (query === "") {
+        if (onResults) {
+          onResults([]);
+        }
+        return;
+      }
 
       if (searchFunction) {
         const results = await searchFunction(query);

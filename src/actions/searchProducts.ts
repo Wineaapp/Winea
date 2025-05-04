@@ -1,14 +1,119 @@
 "use server";
 
 import { ApifyClient } from "apify-client";
-import { JumiaProduct, FacebookAd } from "@/lib/types";
-
+import { FacebookAd } from "@/lib/types";
+import { cache } from "react";
 // Initialize the ApifyClient with API token
 const client = new ApifyClient({
-  token: "apify_api_Vo2ywCBm0imUwc9B2ajxtc8r4h0qHB2dbiTE",
+  token: process.env.APIFY_TOKEN,
 });
 
+let staticDigitalAds: FacebookAd[] | null = null;
+
+// Function to fetch ads
+async function fetchAds(
+  query: string,
+  startDate: string,
+  country: string,
+  status: string,
+  language: string
+) {
+  const input = {
+    searchUrl: `https://www.facebook.com/ads/library/?active_status=${status}&ad_type=all&content_languages[0]=${language}&country=${country}&is_targeted_country=false&media_type=all&q=${encodeURIComponent(query)}&search_type=keyword_unordered${startDate ? `&start_date[max]=${startDate}` : ""}`,
+    maxItems: 20,
+  };
+
+  const run = await client.actor("CfCwPWpfjpxQhOboS").call(input);
+  const { items } = await client.dataset(run.defaultDatasetId).listItems();
+  return items;
+}
+
+// Initialize static data at build time
+if (process.env.NODE_ENV === "production") {
+  fetchAds("digital", "2025-04-01", "CM", "all", "fr")
+    .then((items) => {
+      staticDigitalAds = items as FacebookAd[];
+    })
+    .catch(console.error);
+}
+
+// Cached fetch function for dynamic queries
+const fetchAdsWithCache = cache(fetchAds);
+
 export async function searchFacebookAds(
+  query: string = "digital",
+  startDate: string = "2025-04-01",
+  country: string = "CM",
+  status: string = "all",
+  language: string = "fr"
+) {
+  try {
+    if (!process.env.APIFY_TOKEN) {
+      console.warn("Warning: APIFY_TOKEN not found in environment variables");
+      throw new Error("Apify token is not configured on the server.");
+    }
+
+    // Return static data for the default query in production
+    if (
+      process.env.NODE_ENV === "production" &&
+      query === "digital" &&
+      startDate === "2025-04-01" &&
+      country === "CM" &&
+      status === "all" &&
+      language === "fr" &&
+      staticDigitalAds
+    ) {
+      return staticDigitalAds;
+    }
+
+    // Fallback to cached dynamic fetch for other queries
+    const items = await fetchAdsWithCache(
+      query,
+      startDate,
+      country,
+      status,
+      language
+    );
+    return items as FacebookAd[];
+  } catch (error) {
+    console.error("Error fetching ads:", error);
+    throw new Error("Failed to fetch ads data");
+  }
+}
+
+/* export async function searchFacebookAds(
+  query: string = "digital"
+   startDate: string = "2025-04-01",
+  country: string = "CM",
+  status: string = "all",
+  language: string = "en" 
+) {
+  try {
+    if (!process.env.APIFY_TOKEN) {
+      console.warn("Warning: APIFY_TOKEN not found in environment variables");
+    }
+
+    // Prepare Actor input with the correct parameters
+    const input = {
+      searchUrl: `https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=CM&is_targeted_country=false&media_type=all&q=${encodeURIComponent(query)}&search_type=keyword_unordered`,
+      maxItems: 20,
+    };
+
+    // Run the Actor and wait for it to finish
+    const run = await client.actor("CfCwPWpfjpxQhOboS").call(input);
+
+    // Fetch Actor results from the run's dataset
+    const { items } = await client.dataset(run.defaultDatasetId).listItems();
+    console.log("Fetched ads:", items);
+
+    return items as FacebookAd[];
+  } catch (error) {
+    console.error("Error fetching ads:", error);
+    throw new Error("Failed to fetch ads data");
+  }
+} */
+
+/* export async function searchInstagramAds(
   query: string = "digital",
   startDate: string = "2025-04-01",
   country: string = "CM",
@@ -19,7 +124,7 @@ export async function searchFacebookAds(
   const input = {
     urls: [
       {
-        url: `https://www.facebook.com/ads/library/?active_status=${status}&ad_type=all&content_languages[0]=${language}&country=${country}&is_targeted_country=false&media_type=image&q=${encodeURIComponent(query)}&search_type=keyword_unordered${startDate ? `&start_date[max]=${startDate}` : ""}`,
+        url: `https://www.facebook.com/ads/library/?active_status=${status}&ad_type=all&content_languages[0]=${language}&country=${country}&is_targeted_country=false&media_type=all&publisher_platforms[0]=instagram&q=${encodeURIComponent(query)}&search_type=keyword_unordered${startDate ? `&start_date[max]=${startDate}` : ""}`,
       },
     ],
     count: 10,
@@ -38,26 +143,4 @@ export async function searchFacebookAds(
   });
 
   return items as FacebookAd[];
-}
-
-export async function searchJumiaProducts(): Promise<JumiaProduct[]> {
-  const input = {
-    searchUrls: ["https://www.jumia.com.ng/health-care/#catalog-listing"],
-    maxItems: 10,
-    proxyConfiguration: {
-      useApifyProxy: false,
-    },
-  };
-
-  // Run the Actor and wait for it to finish
-  const run = await client.actor("SqE6Cg7U75yiYDAs4").call(input);
-
-  // Fetch and print Actor results from the run's dataset (if any)
-  console.log("Results from dataset");
-  const { items } = await client.dataset(run.defaultDatasetId).listItems();
-  items.forEach((item) => {
-    console.dir(item);
-  });
-
-  return items as JumiaProduct[];
-}
+} */

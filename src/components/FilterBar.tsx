@@ -150,8 +150,8 @@ export default function FilterBar({
             onChange={(e) => onLanguageChange(e.target.value)}
             className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200 ease-in-out hover:bg-gray-100 appearance-none"
           >
-            <option value="en">Anglais</option>
             <option value="fr">Français</option>
+            <option value="en">Anglais</option>
           </select>
         </div>
       </div>

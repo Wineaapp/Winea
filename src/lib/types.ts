@@ -116,121 +116,144 @@ type JumiaProduct = {
   };
 };
 
-type FacebookAdCard = {
-  id: string;
-  type: string;
-  [key: string]: unknown;
-};
-
-type FacebookAdVideo = {
-  id: string;
-  url: string;
-  thumbnail_url?: string;
-  [key: string]: unknown;
-};
-
-type FacebookAdImage = {
-  id: string;
-  url: string;
-  [key: string]: unknown;
-};
-
-type FacebookAdSnapshot = {
-  body: {
-    text: string;
-  };
-  branded_content: null;
-  brazil_tax_id: null;
-  byline: null;
-  caption: string;
-  cards: FacebookAdCard[];
-  cta_text: string;
-  cta_type: string;
-  country_iso_code: null;
-  current_page_name: string;
-  disclaimer_label: null;
-  display_format: string;
-  event: null;
-  images: FacebookAdImage[];
-  is_reshared: boolean;
-  link_description: null;
-  link_url: string;
-  page_categories: string[];
-  page_entity_type: string;
-  page_id: string;
-  page_is_deleted: boolean;
-  page_is_profile_page: boolean;
-  page_like_count: number;
-  page_name: string;
-  page_profile_picture_url: string;
-  page_profile_uri: string;
-  root_reshared_post: null;
-  title: null;
-  videos: FacebookAdVideo[];
-  additional_info: null;
-  ec_certificates: unknown[];
-  extra_images: FacebookAdImage[];
-  extra_links: Record<string, string>[];
-  extra_texts: Record<string, string>[];
-  extra_videos: FacebookAdVideo[];
-};
-
-type FacebookAdMenuItem = {
-  id: string;
-  text: string;
-  url?: string;
-  [key: string]: unknown;
-};
-
 type FacebookAd = {
-  ad_archive_id: string;
-  ad_id: string | null;
-  archive_types: string[];
-  categories: string[];
-  collation_count: number;
-  collation_id: string;
-  contains_digital_created_media: boolean;
-  contains_sensitive_content: boolean;
-  currency: string;
-  end_date: number;
-  entity_type: string;
-  fev_info: null;
-  gated_type: string;
-  has_user_reported: boolean;
-  hidden_safety_data: boolean;
-  hide_data_status: string;
-  impressions_with_index: {
-    impressions_text: string | null;
-    impressions_index: number;
-  };
-  is_aaa_eligible: boolean;
-  is_active: boolean;
-  is_profile_page: boolean;
-  menu_items: FacebookAdMenuItem[];
-  page_id: string;
-  page_is_deleted: boolean;
   page_name: string;
-  political_countries: string[];
-  publisher_platform: string[];
-  reach_estimate: null;
-  regional_regulation_data: {
-    finserv: {
-      is_deemed_finserv: boolean;
-      is_limited_delivery: boolean;
+  url?: string;
+  snapshot: {
+    body?: { text?: string };
+    branded_content?: {
+      sponsor_page_id?: string;
+      sponsor_page_name?: string;
+      sponsor_relationship?: string;
     };
-    tw_anti_scam: {
-      is_limited_delivery: boolean;
+    byline?: string;
+    caption?: string;
+    cards?: {
+      title?: string;
+      description?: string;
+      link_url?: string;
+      image_url?: string;
+    }[];
+    cta_text?: string;
+    cta_type?: string;
+    current_page_name?: string;
+    disclaimer_label?: string;
+    display_format?: string;
+    event?: {
+      name?: string;
+      start_timestamp?: number;
+      end_timestamp?: number;
+      location?: string;
+    };
+    images?: { original_image_url: string }[];
+    is_reshared?: boolean;
+    link_description?: string;
+    link_url?: string;
+    page_categories?: string[];
+    page_entity_type?: string;
+    page_id?: string;
+    page_is_deleted?: boolean;
+    page_is_profile_page?: boolean;
+    page_like_count?: number;
+    page_name?: string;
+    page_profile_picture_url?: string;
+    page_profile_uri?: string;
+    root_reshared_post?: {
+      id?: string;
+      message?: string;
+      created_time?: string;
+    };
+    title?: string;
+    videos?: {
+      video_hd_url?: string;
+      video_preview_image_url?: string;
+      video_sd_url?: string;
+      watermarked_video_hd_url?: string;
+      watermarked_video_sd_url?: string;
+    }[];
+    additional_info?: Record<string, unknown>;
+    ec_certificates?: {
+      type?: string;
+      url?: string;
+      expiry_date?: string;
+    }[];
+    extra_images?: {
+      url?: string;
+      alt_text?: string;
+    }[];
+    extra_links?: {
+      url?: string;
+      title?: string;
+      description?: string;
+    }[];
+    extra_texts?: {
+      text?: string;
+      type?: string;
+    }[];
+    extra_videos?: {
+      url?: string;
+      thumbnail_url?: string;
+      duration?: number;
+    }[];
+  };
+  start_date?: number;
+  end_date?: number;
+  ad_archive_id?: string;
+  ad_id?: string | null;
+  archive_types?: string[];
+  categories?: string[];
+  collation_count?: number;
+  collation_id?: string;
+  contains_digital_created_media?: boolean;
+  contains_sensitive_content?: boolean;
+  currency?: string;
+  entity_type?: string;
+  fev_info?: Record<string, unknown>;
+  gated_type?: string;
+  has_user_reported?: boolean;
+  hidden_safety_data?: boolean;
+  hide_data_status?: string;
+  impressions_with_index?: {
+    impressions_text?: string | null;
+    impressions_index?: number;
+  };
+  is_aaa_eligible?: boolean;
+  is_active?: boolean;
+  is_profile_page?: boolean;
+  menu_items?: {
+    text?: string;
+    url?: string;
+    type?: string;
+  }[];
+  page_id?: string;
+  page_is_deleted?: boolean;
+  political_countries?: string[];
+  publisher_platform?: string[];
+  reach_estimate?: {
+    lower_bound?: number;
+    upper_bound?: number;
+  };
+  regional_regulation_data?: {
+    finserv?: {
+      is_deemed_finserv?: boolean;
+      is_limited_delivery?: boolean;
+    };
+    tw_anti_scam?: {
+      is_limited_delivery?: boolean;
     };
   };
-  report_count: null;
-  snapshot: FacebookAdSnapshot;
-  spend: null;
-  start_date: number;
-  state_media_run_label: null;
-  targeted_or_reached_countries: string[];
-  total_active_time: number;
-  url: string;
-  total: number;
+  report_count?: number | null;
+  spend?: {
+    lower_bound?: number;
+    upper_bound?: number;
+    currency?: string;
+  };
+  state_media_run_label?: {
+    label?: string;
+    effective_date?: string;
+  };
+  targeted_or_reached_countries?: string[];
+  total_active_time?: number | null;
 };
 
 export type { MarketplaceProduct, JumiaProduct, FacebookAd };
