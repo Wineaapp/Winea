@@ -2,37 +2,11 @@
 
 import { ApifyClient } from "apify-client";
 import { FacebookAd } from "@/lib/types";
-import { unstable_cache } from "next/cache";
 
 // Initialize the ApifyClient with API token
 const client = new ApifyClient({
   token: process.env.APIFY_TOKEN,
 });
-
-// Function to fetch ads
-const fetchAdsWithCache = unstable_cache(
-  async (
-    query: string,
-    startDate: string,
-    country: string,
-    status: string,
-    language: string
-  ) => {
-    const input = {
-      searchUrl: `https://www.facebook.com/ads/library/?active_status=${status}&ad_type=all&content_languages[0]=${language}&country=${country}&is_targeted_country=false&media_type=all&q=${encodeURIComponent(query)}&search_type=keyword_unordered${startDate ? `&start_date[max]=${startDate}` : ""}`,
-      maxItems: 20,
-    };
-
-    const run = await client.actor("CfCwPWpfjpxQhOboS").call(input);
-    const { items } = await client.dataset(run.defaultDatasetId).listItems();
-    return items;
-  },
-  [],
-  {
-    revalidate: 3600, // Cache for 1 hour
-    tags: ["facebook-ads"], // Tag for cache invalidation
-  }
-);
 
 export async function searchFacebookAds(
   query: string = "digital",
@@ -47,13 +21,19 @@ export async function searchFacebookAds(
       throw new Error("Apify token is not configured on the server.");
     }
 
-    const items = await fetchAdsWithCache(
-      query,
-      startDate,
-      country,
-      status,
-      language
-    );
+    // Prepare Actor input with the correct parameters
+    const input = {
+      searchUrl: `https://www.facebook.com/ads/library/?active_status=${status}&ad_type=all&content_languages[0]=${language}&country=${country}&is_targeted_country=false&media_type=all&q=${encodeURIComponent(query)}&search_type=keyword_unordered${startDate ? `&start_date[max]=${startDate}` : ""}`,
+      maxItems: 20,
+    };
+
+    // Run the Actor and wait for it to finish
+    const run = await client.actor("CfCwPWpfjpxQhOboS").call(input);
+
+    // Fetch Actor results from the run's dataset
+    const { items } = await client.dataset(run.defaultDatasetId).listItems();
+    console.log("Fetched ads:", items);
+
     return items as FacebookAd[];
   } catch (error) {
     console.error("Error fetching ads:", error);
