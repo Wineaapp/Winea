@@ -4,11 +4,20 @@ import FilterBar from "@/components/FilterBar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/Tabs";
 import { BsFacebook } from "react-icons/bs";
 /* import { BsInstagram } from "react-icons/bs"; */
-import { searchFacebookAds } from "@/actions/searchProducts";
+import {
+  searchFacebookAds,
+  getFacebookAdsResults,
+} from "@/actions/searchProducts";
 import { FacebookAd } from "@/lib/types";
 import { useState, useEffect, useCallback } from "react";
 import { Heart } from "lucide-react";
 import Image from "next/image";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 
 export default function AdsPage() {
   const [searchResults, setSearchResults] = useState<FacebookAd[]>([]);
@@ -17,22 +26,57 @@ export default function AdsPage() {
   const [selectedCountry, setSelectedCountry] = useState("CM");
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [selectedLanguage, setSelectedLanguage] = useState("fr");
+  const [selectedAd, setSelectedAd] = useState<FacebookAd | null>(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const fetchAds = useCallback(
     async (query?: string) => {
       setIsLoading(true);
       try {
-        const results = await searchFacebookAds(
+        const { runId } = await searchFacebookAds(
           query || "digital",
           startDate,
           selectedCountry,
           selectedStatus,
           selectedLanguage
         );
-        setSearchResults(results);
+
+        let displayedItems = new Set();
+        const pollInterval = setInterval(async () => {
+          try {
+            const { status, items } = await getFacebookAdsResults(runId);
+
+            // Progressive loading: Display new items as they come in
+            if (items.length > 0) {
+              const newItems = items.filter(
+                (item) => !displayedItems.has(item.page_name)
+              );
+              if (newItems.length > 0) {
+                displayedItems = new Set([
+                  ...displayedItems,
+                  ...newItems.map((item) => item.page_name),
+                ]);
+                setSearchResults((prev) => [...prev, ...newItems]);
+              }
+            }
+
+            if (status === "SUCCEEDED") {
+              setIsLoading(false);
+              clearInterval(pollInterval);
+            } else if (status === "FAILED") {
+              setIsLoading(false);
+              clearInterval(pollInterval);
+            }
+          } catch (error) {
+            console.error("Error polling results:", error);
+            setIsLoading(false);
+            clearInterval(pollInterval);
+          }
+        }, 2000);
+
+        return () => clearInterval(pollInterval);
       } catch (error) {
         console.error("Error fetching ads:", error);
-      } finally {
         setIsLoading(false);
       }
     },
@@ -56,21 +100,37 @@ export default function AdsPage() {
   return (
     <div className="layout">
       <h1 className="text-3xl font-bold mb-2">Publicités</h1>
-      <SearchForm
-        searchFunction={(query) =>
-          searchFacebookAds(
+      <SearchForm<FacebookAd>
+        searchFunction={async (query) => {
+          const { runId } = await searchFacebookAds(
             query,
             startDate,
             selectedCountry,
             selectedStatus,
             selectedLanguage
-          )
-        }
+          );
+
+          // Poll for results until they're ready
+          let attempts = 0;
+          const maxAttempts = 60; // 60 seconds maximum wait time
+
+          while (attempts < maxAttempts) {
+            const { status, items } = await getFacebookAdsResults(runId);
+            if (status === "SUCCEEDED" && items.length > 0) {
+              return items as FacebookAd[];
+            } else if (status === "FAILED") {
+              throw new Error("Failed to fetch ads");
+            }
+            await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait 2 seconds before next attempt
+            attempts++;
+          }
+
+          throw new Error("Timeout waiting for results");
+        }}
         placeholder="Rechercher une publicité"
         onResults={handleSearchResults}
         onSearchStart={handleSearchStart}
       />
-
       <FilterBar
         startDate={startDate}
         onStartDateChange={(date) => setStartDate(date)}
@@ -335,16 +395,8 @@ export default function AdsPage() {
                             className="w-full bg-purple-600 text-white py-2.5 px-4 rounded-lg font-medium
                     hover:bg-purple-700 transition-colors duration-200 flex items-center justify-center space-x-2"
                             onClick={() => {
-                              const adUrl = ad.url || ad.snapshot.link_url;
-                              if (adUrl) {
-                                window.open(
-                                  adUrl,
-                                  "_blank",
-                                  "noopener,noreferrer"
-                                );
-                              } else {
-                                console.log("URL de l'annonce non disponible");
-                              }
+                              setSelectedAd(ad);
+                              setIsSheetOpen(true);
                             }}
                           >
                             <span>Voir l&apos;annonce</span>
@@ -384,6 +436,179 @@ export default function AdsPage() {
           </div>
         </TabsContent>
       </Tabs>
+
+      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+        <SheetContent className="w-[90%] sm:w-[540px] overflow-y-auto">
+          {selectedAd && (
+            <div className="space-y-6">
+              <SheetHeader>
+                <SheetTitle className="text-xl font-bold">
+                  {selectedAd.page_name}
+                </SheetTitle>
+                {selectedAd?.start_date && (
+                  <div className="text-sm text-gray-500 mb-4">
+                    Créé le{" "}
+                    {new Date(
+                      selectedAd.start_date * 1000
+                    ).toLocaleDateString()}
+                  </div>
+                )}
+              </SheetHeader>
+
+              <div className="space-y-4">
+                {/* Ad Media */}
+                {(() => {
+                  const mainVideo = selectedAd.snapshot.videos?.[0];
+                  const extraVideo = selectedAd.snapshot.extra_videos?.[0];
+                  const mainImage = selectedAd.snapshot.images?.[0];
+                  const extraImage = selectedAd.snapshot.extra_images?.[0];
+
+                  if (
+                    mainVideo &&
+                    (mainVideo.video_hd_url || mainVideo.video_sd_url)
+                  ) {
+                    return (
+                      <div className="relative aspect-video rounded-lg overflow-hidden">
+                        <video
+                          src={mainVideo.video_hd_url || mainVideo.video_sd_url}
+                          poster={mainVideo.video_preview_image_url}
+                          controls
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    );
+                  }
+
+                  if (extraVideo?.url) {
+                    return (
+                      <div className="relative aspect-video rounded-lg overflow-hidden">
+                        <video
+                          src={extraVideo.url}
+                          poster={extraVideo.thumbnail_url}
+                          controls
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    );
+                  }
+
+                  if (mainImage?.original_image_url) {
+                    return (
+                      <div className="relative aspect-video rounded-lg overflow-hidden">
+                        <Image
+                          src={mainImage.original_image_url}
+                          alt="Ad image"
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    );
+                  }
+
+                  if (extraImage?.url) {
+                    return (
+                      <div className="relative aspect-video rounded-lg overflow-hidden">
+                        <Image
+                          src={extraImage.url}
+                          alt={extraImage.alt_text || "Ad image"}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    );
+                  }
+
+                  return null;
+                })()}
+
+                {/* Ad Details */}
+                <div className="space-y-4 text-sm">
+                  {/* Page Info */}
+                  <div className="flex items-center space-x-3">
+                    {selectedAd.snapshot.page_profile_picture_url && (
+                      <div className="relative w-12 h-12 rounded-full overflow-hidden">
+                        <Image
+                          src={selectedAd.snapshot.page_profile_picture_url}
+                          alt="Page profile"
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    )}
+                    <div>
+                      <h4 className="font-semibold">{selectedAd.page_name}</h4>
+                      <p className="text-gray-500 text-xs">
+                        {selectedAd.start_date
+                          ? new Date(
+                              selectedAd.start_date * 1000
+                            ).toLocaleDateString()
+                          : "Date non disponible"}
+                        {selectedAd.end_date && (
+                          <span>
+                            {" "}
+                            -{" "}
+                            {new Date(
+                              selectedAd.end_date * 1000
+                            ).toDateString() === new Date().toDateString() ||
+                            new Date(selectedAd.end_date * 1000) > new Date()
+                              ? "En cours"
+                              : new Date(
+                                  selectedAd.end_date * 1000
+                                ).toLocaleDateString()}
+                          </span>
+                        )}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Ad Content */}
+                  {selectedAd.snapshot.body?.text && (
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <p className="whitespace-pre-wrap">
+                        {selectedAd.snapshot.body.text}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Additional Details */}
+                  <div className="space-y-2">
+                    {selectedAd.snapshot.cta_type && (
+                      <div>
+                        <span className="font-medium">Type de CTA:</span>{" "}
+                        <span className="text-gray-600">
+                          {selectedAd.snapshot.cta_type}
+                        </span>
+                      </div>
+                    )}
+                    {selectedAd.categories &&
+                      selectedAd.categories.length > 0 && (
+                        <div>
+                          <span className="font-medium">Catégories:</span>{" "}
+                          <span className="text-gray-600">
+                            {selectedAd.categories.join(", ")}
+                          </span>
+                        </div>
+                      )}
+                    {selectedAd.snapshot.link_url && (
+                      <div>
+                        <span className="font-medium">URL:</span>{" "}
+                        <a
+                          href={selectedAd.snapshot.link_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-purple-600 hover:text-purple-700 underline break-all"
+                        >
+                          {selectedAd.snapshot.link_url}
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
