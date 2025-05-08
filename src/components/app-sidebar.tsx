@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  Package,
-  Play,
-  Home,
-  Megaphone,
-  Medal,
-  Store,
-  Share2,
-} from "lucide-react";
+import { Home, Megaphone, MessageSquare, Store, Share2 } from "lucide-react";
 import { UserButton, useClerk } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 
@@ -41,25 +33,16 @@ const items = [
     icon: Megaphone,
   },
   {
-    title: "Produits",
-    url: "/produits",
-    icon: Package,
-  },
-  {
-    title: "Produits Winners",
-    url: "/winners",
-    icon: Medal,
-  },
-  {
-    title: "Tutoriels",
-    url: "/tutoriels",
-    icon: Play,
-  },
-  {
     title: "Boutiques",
     url: "/boutiques",
     icon: Store,
   },
+  {
+    title: "Chatbot",
+    url: "/chatbot",
+    icon: MessageSquare,
+  },
+
   {
     title: "Affiliation",
     url: "/affiliation",

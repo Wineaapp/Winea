@@ -29,6 +29,11 @@ const nextConfig: NextConfig = {
         hostname: "scontent-*.cdninstagram.com",
         pathname: "**",
       },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+        pathname: "/**",
+      },
     ],
   },
 };
