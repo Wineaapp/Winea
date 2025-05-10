@@ -30,12 +30,12 @@ export default function Header() {
 
         <section className="text-center pt-20 pb-36  md:px-20 flex flex-col justify-center items-center gap-8">
           <h1 className="font-extrabold text-3xl sm:text-5xl">
-            Boostez votre <br /> e-commerce en Afrique grâce à notre outil
-            d&apos;analyse
+            Transformez les données e-commerce en croissance, sur tout le
+            continent.
           </h1>
-          <p className="font-thin sm:px-20 lg:px-59">
-            Découvrez les produits, publicités et tendances adapté au marché
-            africain
+          <p className="font-normal sm:px-20 lg:px-59">
+            Winea est conçu pour vous permettre de découvrir et d&apos;analyser
+            les produits, publicités et tendances adapté au marché africain
           </p>
           <WaitlistButton />
           {/* <Link href='#waitlist' className="bg-[#EFCC5B] text-xs text-black font-semibold py-4 px-6 rounded-full [@media(hover:hover)]:hover:bg-black [@media(hover:hover)]:hover:text-white active:bg-black active:text-white transition-all">Rejoignez la liste d&apos;attente</Link> */}
