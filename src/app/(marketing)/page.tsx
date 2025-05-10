@@ -2,6 +2,7 @@ import Image from "next/image";
 import Waitlist from "@/components/Waitlist";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+/* import Script from "next/script"; */
 
 export default function Home() {
   return (
@@ -13,9 +14,50 @@ export default function Home() {
           {/* Gradient background div */}
           <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 rounded-3xl blur-3xl opacity-80 md:opacity-40" />
           <div className="relative">
+            {/* <div
+              id="howdygo-embed"
+              style={{
+                width: "100%",
+                maxWidth: "1920px",
+                backgroundColor: "#ffffff",
+                border: "1px solid #e2e8f0",
+                borderRadius: "12px",
+                overflow: "hidden",
+                boxShadow:
+                  "0px 0px 1px rgba(45, 55, 72, 0.05), 0px 4px 8px rgba(45, 55, 72, 0.1)",
+              }}
+            >
+              <Script src="https://js.howdygo.com/v1.2.1/index.js" />
+              <div
+                id="howdygo-wrapper"
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  height: "0",
+                  paddingBottom: "calc(49.84375% + 40px)",
+                }}
+              >
+                <iframe
+                  id="howdygo-frame"
+                  src="https://app.howdygo.com/embed/b5131183-fcc0-4fca-be70-ca554b3eaa66"
+                  frameBorder="0"
+                  scrolling="no"
+                  allowFullScreen
+                  allow="clipboard-write"
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                  }}
+                />
+              </div>
+            </div> */}
+
             <Image
-              className="mx-auto"
-              src="/Dashboard.png"
+              className="mx-auto rounded-3xl overflow-hidden "
+              src="/Dashboard1.webp"
               alt="dashboard"
               width={1116}
               height={735}
@@ -224,7 +266,8 @@ export default function Home() {
           <div className="layout flex flex-col md:flex-row justify-center items-center gap-16">
             <div className="flex flex-col gap-8 items-center justify-center md:items-start md:text-left ">
               <h2 className="font-extrabold text-3xl">
-                Rejoignez la liste d&apos;attente exclusive de Winea
+                Rejoignez notre communauté d’utilisateurs premium et profitez
+                d&apos;un accès exclusif.
               </h2>
               <Waitlist />
             </div>

@@ -32,8 +32,11 @@ export default function Waitlist() {
   if (submitted) {
     return (
       <div className="w-full text-center p-8">
-        <h2 className="text-xl font-bold mb-4">Merci !</h2>
-        <p>Votre inscription a été bien enregistrée.</p>
+        <h2 className="text-xl font-bold mb-4">Merci pour votre message.</h2>
+        <p>
+          Nous prendrons le temps de lire votre demande avec attention et nous
+          vous contacterons dans quelques jours.
+        </p>
       </div>
     );
   }
@@ -69,7 +72,7 @@ export default function Waitlist() {
         {/* For PhoneInput, you might need to override its default CSS */}
         <PhoneInput
           name="numero"
-          defaultCountry="BJ"
+          defaultCountry="MA"
           value={phoneNumber}
           onChange={setPhoneNumber}
           placeholder="95 55 28 12"
@@ -116,6 +119,12 @@ export default function Waitlist() {
             Telegram
           </option>
           <option
+            value="linkedin"
+            style={{ color: "black", backgroundColor: "white" }}
+          >
+            Linkedin
+          </option>
+          <option
             value="africommercepro"
             style={{ color: "black", backgroundColor: "white" }}
           >
@@ -139,7 +148,7 @@ export default function Waitlist() {
         name="fonctionnalites"
         className="md:col-span-2 border-2 text-xs text-black font-semibold py-2 px-4 rounded-full"
         type="text"
-        placeholder="Les fonctionnalités que vous aimeriez voir sur Winea"
+        placeholder="Qui êtes-vous et comment notre application pourrait-elle vous aider ?"
         required
       />
 
