@@ -24,12 +24,12 @@ interface Message {
 export default function Chatbot() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
 
-    // Add user message
     const userMessage: Message = {
       id: Date.now().toString(),
       content: input,
@@ -38,6 +38,7 @@ export default function Chatbot() {
 
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
+    setIsTyping(true);
 
     // Simulate bot response
     setTimeout(() => {
@@ -47,8 +48,8 @@ export default function Chatbot() {
         isUser: false,
         productInfo: {
           name: "POEDAGAR Montre de luxe pour femme",
-          price: "8 500 FCFA",
-          shares: 995,
+          price: "198 GHS",
+          shares: 85,
           image:
             "https://images.unsplash.com/photo-1547996160-81dfa63595aa?auto=format&fit=crop&q=80",
         },
@@ -63,7 +64,8 @@ export default function Chatbot() {
           isUser: false,
         };
         setMessages((prev) => [...prev, compareMessage]);
-      }, 1000);
+        setIsTyping(false);
+      }, 2000);
     }, 1000);
   };
 
@@ -77,7 +79,7 @@ export default function Chatbot() {
     setMessages((prev) => [...prev, userMessage]);
 
     // If user says yes, show similar products
-    if (response.toLowerCase() === "oui") {
+    if (response.toLowerCase() === "oui vas y") {
       setTimeout(() => {
         const similarProductsMessage: Message = {
           id: (Date.now() + 1).toString(),
@@ -89,21 +91,21 @@ export default function Chatbot() {
               image:
                 "https://images.unsplash.com/photo-1549972574-8e3e1ed6a347",
               name: "Montre dorée classique",
-              price: "7 500 FCFA",
+              price: "169 GHS",
             },
             {
               id: 2,
               image:
                 "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3",
               name: "Montre bordeaux élégante",
-              price: "9 000 FCFA",
+              price: "202 GHS",
             },
             {
               id: 3,
               image:
                 "https://images.unsplash.com/photo-1539874754764-5a96559165b0",
               name: "Montre verte sophistiquée",
-              price: "8 200 FCFA",
+              price: "185 GHS",
             },
           ],
         };
@@ -114,7 +116,7 @@ export default function Chatbot() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-150px)] bg-white rounded-lg overflow-hidden">
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 space-y-8">
         {messages.map((message) => (
           <div
             key={message.id}
@@ -184,6 +186,18 @@ export default function Chatbot() {
             </div>
           </div>
         ))}
+        {isTyping && (
+          <div className="flex justify-start">
+            <div className="h-8 w-8 rounded-full bg-[#7224D1] flex items-center justify-center text-white mr-2">
+              🤖
+            </div>
+            <div className="flex flex-col gap-2">
+              <div className="rounded-2xl px-4 py-2 bg-[#7224D1] text-white">
+                <span className="typing-animation">...</span>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="p-4 border-t">

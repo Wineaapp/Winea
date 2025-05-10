@@ -22,7 +22,7 @@ export async function searchFacebookAds(
 
     const input = {
       searchUrl: `https://www.facebook.com/ads/library/?active_status=${status}&ad_type=all&content_languages[0]=${language}&country=${country}&is_targeted_country=false&media_type=all&q=${encodeURIComponent(query)}&search_type=keyword_unordered${startDate ? `&start_date[max]=${startDate}` : ""}`,
-      maxItems: 5,
+      maxItems: 6,
       // Add performance optimizations
       maxConcurrency: 10,
       maxRequestRetries: 3,
@@ -30,7 +30,7 @@ export async function searchFacebookAds(
     };
 
     const { id: runId } = await client.actor("CfCwPWpfjpxQhOboS").start(input, {
-      memory: 16384,
+      memory: 8192, // 8GB memory,
       timeout: 300, // 5 minutes timeout
     });
 
