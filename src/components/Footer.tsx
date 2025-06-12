@@ -20,7 +20,7 @@ export default function Footer() {
 
           <div className="flex gap-4 md:gap-8 md:relative top-[0.3rem]">
             <Link
-              href="#waitlist"
+              href="https://drive.google.com/file/d/1JNiZCpZalPhvwOEhwqHWcr_aQ_oSiwnd/view?usp=sharing"
               className="[@media(hover:hover)]:hover:underline [@media(hover:hover)]:hover:text-purple-600 active:text-purple-600"
             >
               Voir la démo
